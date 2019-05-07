@@ -1,0 +1,12 @@
+spring:
+  flyway:
+    enabled: false
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
