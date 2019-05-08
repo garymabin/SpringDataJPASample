@@ -1,4 +1,4 @@
-package com.thoughtworks.demo.persistence.repository;
+package com.thoughtworks.demo.persistence.dao;
 
 import ch.qos.logback.classic.Logger;
 import com.google.common.collect.Lists;
@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class AssociationTest {
 
     @Autowired
-    private AircraftRepository aircraftRepository;
+    private AircraftDAO aircraftDAO;
 
     @Autowired
-    private WorkPackageRepository workPackageRepository;
+    private WorkPackageDAO workPackageDAO;
 
     @Autowired
     private EntityManager entityManager;
@@ -70,25 +70,25 @@ public class AssociationTest {
                         .name("WP3")
                         .build()));
 
-        aircraftRepository.saveAndFlush(aircraftRecord);
+        aircraftDAO.saveAndFlush(aircraftRecord);
 
         assertEquals(5, appender.getEventList().size());
 
         //clear query cache
         resetHibernateCacheAndLogAppender();
 
-        assertNotNull(aircraftRepository.findAll().get(0).getWorkPackages().iterator().next().getId());
+        assertNotNull(aircraftDAO.findAll().get(0).getWorkPackages().iterator().next().getId());
         assertEquals(2, appender.getEventList().size());
 
         resetHibernateCacheAndLogAppender();
 
-        assertNotNull(workPackageRepository.findAll().get(0).getAircraft().getId());
+        assertNotNull(workPackageDAO.findAll().get(0).getAircraft().getId());
         assertEquals(1, appender.getEventList().size());
 
         //clear query cache
         resetHibernateCacheAndLogAppender();
 
-        assertEquals("NS701", workPackageRepository.findAll().get(0).getAircraft().getTailNumber());
+        assertEquals("NS701", workPackageDAO.findAll().get(0).getAircraft().getTailNumber());
         assertEquals(2, appender.getEventList().size());
 
     }
@@ -115,12 +115,12 @@ public class AssociationTest {
                         .name("WP3")
                         .build()));
 
-        aircraftRepository.saveAndFlush(aircraftRecord);
+        aircraftDAO.saveAndFlush(aircraftRecord);
 
         //clear query cache
         resetHibernateCacheAndLogAppender();
 
-        assertEquals("WP1", aircraftRepository.findAll().get(0).getFirstWorkPackage().getName());
+        assertEquals("WP1", aircraftDAO.findAll().get(0).getFirstWorkPackage().getName());
         assertEquals(2, appender.getEventList().size());
 
     }
@@ -143,19 +143,19 @@ public class AssociationTest {
                 .tasks(Sets.newHashSet(task2))
                 .build();
 
-        workPackageRepository.save(workPackage1);
-        workPackageRepository.save(workPackage2);
+        workPackageDAO.save(workPackage1);
+        workPackageDAO.save(workPackage2);
 
-        workPackageRepository.flush();
+        workPackageDAO.flush();
 
         assertEquals(9, appender.getEventList().size());
 
-        WorkPackageRecord workPackageRecord = workPackageRepository.findAll().get(0);
+        WorkPackageRecord workPackageRecord = workPackageDAO.findAll().get(0);
         workPackageRecord.getTasks().remove(task1);
 
         appender.clear();
 
-        workPackageRepository.saveAndFlush(workPackage1);
+        workPackageDAO.saveAndFlush(workPackage1);
 
         assertEquals(1, appender.getEventList().size());
     }

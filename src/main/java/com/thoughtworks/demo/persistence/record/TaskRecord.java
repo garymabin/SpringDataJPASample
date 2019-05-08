@@ -32,5 +32,6 @@ public class TaskRecord {
 
     @ManyToMany(mappedBy = "tasks")
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     private Set<WorkPackageRecord> workPackages = new HashSet<>();
 }

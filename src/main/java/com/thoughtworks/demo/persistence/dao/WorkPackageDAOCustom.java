@@ -1,7 +1,7 @@
-package com.thoughtworks.demo.persistence.repository;
+package com.thoughtworks.demo.persistence.dao;
 
 import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
 
-public interface WorkPackageRepositoryCustom {
+public interface WorkPackageDAOCustom {
     Iterable<WorkPackageRecord> findAllNameIncludesQueryDSL(String text);
 }

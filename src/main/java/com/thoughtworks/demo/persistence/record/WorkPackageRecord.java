@@ -1,5 +1,6 @@
 package com.thoughtworks.demo.persistence.record;
 
+import com.thoughtworks.demo.domain.aggregates.IWorkPackageAggregate;
 import lombok.*;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.*;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Table(name = "work_package", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @Data
 @Builder
-public class WorkPackageRecord {
+public class WorkPackageRecord implements IWorkPackageAggregate {
 
     @Tolerate
     WorkPackageRecord() {
@@ -33,6 +34,9 @@ public class WorkPackageRecord {
     @JoinColumn(name = "aircraft_id")
     private AircraftRecord aircraft;
 
+    @Column(name = "aircraft_id", insertable = false, updatable = false)
+    private Long aircraftId;
+
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
@@ -42,5 +46,6 @@ public class WorkPackageRecord {
             inverseJoinColumns = @JoinColumn(name = "task_id")
     )
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     private Set<TaskRecord> tasks = new HashSet<>();
 }

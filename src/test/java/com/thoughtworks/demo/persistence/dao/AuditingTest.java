@@ -1,4 +1,4 @@
-package com.thoughtworks.demo.persistence.repository;
+package com.thoughtworks.demo.persistence.dao;
 
 import com.google.common.collect.Lists;
 import com.thoughtworks.demo.persistence.record.AircraftRecord;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AuditingTest {
 
     @Autowired
-    private AircraftRepository aircraftRepository;
+    private AircraftDAO aircraftDAO;
 
     @Test
     public void testCreatedDateAuditingRules() {
@@ -29,9 +29,9 @@ public class AuditingTest {
                 .workPackages(Lists.newArrayList())
                 .build();
 
-        aircraftRepository.saveAndFlush(aircraftRecord);
+        aircraftDAO.saveAndFlush(aircraftRecord);
 
-        assertNotNull(aircraftRepository.findAll().get(0).getCreatedAt());
+        assertNotNull(aircraftDAO.findAll().get(0).getCreatedAt());
     }
 
     @Test
@@ -41,6 +41,6 @@ public class AuditingTest {
                 .build();
 
 
-        assertThrows(RuntimeException.class, () -> aircraftRepository.saveAndFlush(aircraftRecord));
+        assertThrows(RuntimeException.class, () -> aircraftDAO.saveAndFlush(aircraftRecord));
     }
 }

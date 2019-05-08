@@ -1,4 +1,4 @@
-package com.thoughtworks.demo.persistence.repository.specifications;
+package com.thoughtworks.demo.persistence.dao.specifications;
 
 
 import com.thoughtworks.demo.persistence.record.WorkPackageRecord;

@@ -1,4 +1,4 @@
-package com.thoughtworks.demo.persistence.repository;
+package com.thoughtworks.demo.persistence.dao;
 
 import com.thoughtworks.demo.persistence.record.QWorkPackageRecord;
 import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface WorkPackageRepository extends JpaRepository<WorkPackageRecord, String>, JpaSpecificationExecutor<WorkPackageRecord>, QuerydslPredicateExecutor<WorkPackageRecord>, WorkPackageRepositoryCustom {
+public interface WorkPackageDAO extends JpaRepository<WorkPackageRecord, String>, JpaSpecificationExecutor<WorkPackageRecord>, QuerydslPredicateExecutor<WorkPackageRecord>, WorkPackageDAOCustom {
 
     Optional<WorkPackageRecord> findOneByName(String name);
 

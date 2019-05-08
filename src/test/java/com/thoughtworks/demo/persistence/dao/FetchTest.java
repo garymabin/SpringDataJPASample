@@ -1,4 +1,4 @@
-package com.thoughtworks.demo.persistence.repository;
+package com.thoughtworks.demo.persistence.dao;
 
 import ch.qos.logback.classic.Logger;
 import com.google.common.collect.Lists;
@@ -8,28 +8,20 @@ import com.thoughtworks.demo.persistence.record.TaskRecord;
 import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
 import com.thoughtworks.demo.util.TestAppender;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import junit.framework.TestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import java.util.Objects;
 
-import static com.thoughtworks.demo.persistence.repository.specifications.WorkPackageSpecifications.workPackageIncludesText;
 import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureEmbeddedDatabase(beanName = "dataSource")
@@ -39,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FetchTest {
 
     @Autowired
-    private AircraftRepository aircraftRepository;
+    private AircraftDAO aircraftDAO;
 
     @Autowired
-    private WorkPackageRepository workPackageRepository;
+    private WorkPackageDAO workPackageDAO;
 
     @Autowired
     private EntityManager entityManager;
@@ -78,13 +70,13 @@ public class FetchTest {
                         .name("WP3")
                         .build()));
 
-        aircraftRepository.saveAndFlush(aircraftRecord);
+        aircraftDAO.saveAndFlush(aircraftRecord);
 
         //clear query cache
         entityManager.clear();
         appender.clear();
 
-        assertTrue(aircraftRepository.findByTailNumberWithWorkPackages("NS701").get().getWorkPackages().size() > 0);
+        assertTrue(aircraftDAO.findByTailNumberWithWorkPackages("NS701").get().getWorkPackages().size() > 0);
 
         assertEquals(1, appender.getEventList().size());
     }
@@ -110,13 +102,13 @@ public class FetchTest {
                         .name("WP3")
                         .build()));
 
-        aircraftRepository.saveAndFlush(aircraftRecord);
+        aircraftDAO.saveAndFlush(aircraftRecord);
 
         //clear query cache
         entityManager.clear();
         appender.clear();
 
-        assertTrue(aircraftRepository.findOne(
+        assertTrue(aircraftDAO.findOne(
                 (Specification<AircraftRecord>) (root, query, cb) -> {
                     root.fetch("workPackages");
                     return cb.equal(root.get("tailNumber"), "NS701");
@@ -143,17 +135,17 @@ public class FetchTest {
                 .tasks(Sets.newHashSet(task2))
                 .build();
 
-        workPackageRepository.save(workPackage1);
-        workPackageRepository.save(workPackage2);
+        workPackageDAO.save(workPackage1);
+        workPackageDAO.save(workPackage2);
 
-        workPackageRepository.flush();
+        workPackageDAO.flush();
 
 
         //clear query cache
         entityManager.clear();
         appender.clear();
 
-        assertTrue(workPackageRepository.findAllNameIncludesQueryDSL("WP1").iterator().next().getTasks().size() > 0);
+        assertTrue(workPackageDAO.findAllNameIncludesQueryDSL("WP1").iterator().next().getTasks().size() > 0);
 
         assertEquals(2, appender.getEventList().size());
     }

@@ -1,15 +1,15 @@
-package com.thoughtworks.demo.persistence.repository.impl;
+package com.thoughtworks.demo.persistence.dao.impl;
 
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.thoughtworks.demo.persistence.record.QWorkPackageRecord;
 import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
-import com.thoughtworks.demo.persistence.repository.WorkPackageRepositoryCustom;
+import com.thoughtworks.demo.persistence.dao.WorkPackageDAOCustom;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-public class WorkPackageRepositoryImpl implements WorkPackageRepositoryCustom {
+public class WorkPackageDAOImpl implements WorkPackageDAOCustom {
 
     @PersistenceContext
     private EntityManager entityMananger;
