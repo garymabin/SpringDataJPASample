@@ -4,6 +4,7 @@ package com.thoughtworks.demo.persistence.record;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.NaturalId;
 
@@ -33,5 +34,6 @@ public class TaskRecord {
     @ManyToMany(mappedBy = "tasks")
     @EqualsAndHashCode.Exclude
     @Builder.Default
+    @ToString.Exclude
     private Set<WorkPackageRecord> workPackages = new HashSet<>();
 }

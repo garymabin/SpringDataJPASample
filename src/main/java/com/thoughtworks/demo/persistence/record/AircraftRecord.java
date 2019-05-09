@@ -3,8 +3,10 @@ package com.thoughtworks.demo.persistence.record;
 
 import com.thoughtworks.demo.annotations.Required;
 import com.thoughtworks.demo.domain.aggregates.IAircraftAggregate;
+import com.thoughtworks.demo.domain.events.WorkPackageCreatedEvent;
 import com.thoughtworks.demo.persistence.dao.AircraftDAO;
 import com.thoughtworks.demo.persistence.dao.WorkPackageDAO;
+import com.thoughtworks.demo.util.EventPublisher;
 import com.thoughtworks.demo.util.RequiredFieldsValidator;
 import com.thoughtworks.demo.util.SpringEntityListener;
 import lombok.Builder;
@@ -74,7 +76,8 @@ public class AircraftRecord implements IAircraftAggregate {
     @Override
     @Transactional
     public void addNewWorkPackage(String workPackageName, TaskRecord... tasks) {
-        workPackages.add(WorkPackageRecord.builder().name(workPackageName).tasks(Set.of(tasks)).build());
+        workPackages.add(WorkPackageRecord.builder().name(workPackageName).aircraft(this).tasks(Set.of(tasks)).build());
         aircraftDAO.saveAndFlush(this);
+        EventPublisher.publish(new WorkPackageCreatedEvent("source", workPackageDAO.findOneByName(workPackageName).get()));
     }
 }

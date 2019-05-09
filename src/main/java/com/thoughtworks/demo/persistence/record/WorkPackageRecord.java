@@ -4,11 +4,14 @@ import com.thoughtworks.demo.domain.aggregates.IWorkPackageAggregate;
 import lombok.*;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +19,7 @@ import java.util.Set;
 @Table(name = "work_package", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @Data
 @Builder
+@EntityListeners({AuditingEntityListener.class})
 public class WorkPackageRecord implements IWorkPackageAggregate {
 
     @Tolerate
@@ -32,7 +36,13 @@ public class WorkPackageRecord implements IWorkPackageAggregate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aircraft_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private AircraftRecord aircraft;
+
+    @CreatedDate
+    @Column(name = "created_at")
+    private Instant createdAt;
 
     @Column(name = "aircraft_id", insertable = false, updatable = false)
     private Long aircraftId;
@@ -45,7 +55,6 @@ public class WorkPackageRecord implements IWorkPackageAggregate {
             joinColumns = @JoinColumn(name = "workpackage_id"),
             inverseJoinColumns = @JoinColumn(name = "task_id")
     )
-    @EqualsAndHashCode.Exclude
     @Builder.Default
     private Set<TaskRecord> tasks = new HashSet<>();
 }
