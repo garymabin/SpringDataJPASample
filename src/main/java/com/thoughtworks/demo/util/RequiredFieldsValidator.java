@@ -2,10 +2,10 @@ package com.thoughtworks.demo.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.demo.annotations.Required;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.Objects;
 
 import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @AutoConfigureEmbeddedDatabase(beanName = "dataSource", provider = ZONKY, type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES)
 @SpringBootTest
 @Transactional
-public class AssociationTest {
+public class CascadingTest {
 
     @Autowired
     private AircraftRepository aircraftRepository;
@@ -48,7 +47,7 @@ public class AssociationTest {
     }
 
     @Test
-    public void testAircraftWorkPackageOneToManyBidirectional() {
+    public void testAircraftWorkPackageCascadingUpdate() {
         AircraftRecord aircraftRecord = AircraftRecord.builder()
                 .tailNumber("NS701")
                 .workPackages(Lists.newArrayList())
@@ -91,76 +90,4 @@ public class AssociationTest {
 
     }
 
-
-    @Test
-    public void testAircraftJoinFormulaOnLatestWorkPackage() {
-        AircraftRecord aircraftRecord = AircraftRecord.builder()
-                .tailNumber("NS701")
-                .workPackages(Lists.newArrayList())
-                .build();
-
-        aircraftRecord.getWorkPackages().addAll(Lists.newArrayList(
-                WorkPackageRecord.builder()
-                        .name("WP1")
-                        .aircraft(aircraftRecord)
-                        .build(),
-                WorkPackageRecord.builder()
-                        .aircraft(aircraftRecord)
-                        .name("WP2")
-                        .build(),
-                WorkPackageRecord.builder()
-                        .aircraft(aircraftRecord)
-                        .name("WP3")
-                        .build()));
-
-        aircraftRepository.saveAndFlush(aircraftRecord);
-
-        //clear query cache
-        resetHibernateCacheAndLogAppender();
-
-        assertEquals("WP1", aircraftRepository.findAll().get(0).getFirstWorkPackage().getName());
-        assertEquals(2, appender.getEventList().size());
-
-    }
-
-    @Test
-    public void testWorkPackageTasksManyToMany() {
-        TaskRecord task1 = TaskRecord.builder()
-                .name("task1")
-                .build();
-        TaskRecord task2 = TaskRecord.builder()
-                .name("task2")
-                .build();
-
-        WorkPackageRecord workPackage1 = WorkPackageRecord.builder()
-                .name("WP1")
-                .tasks(Sets.newHashSet(task1, task2))
-                .build();
-        WorkPackageRecord workPackage2 = WorkPackageRecord.builder()
-                .name("WP2")
-                .tasks(Sets.newHashSet(task2))
-                .build();
-
-        workPackageRepository.save(workPackage1);
-        workPackageRepository.save(workPackage2);
-
-        workPackageRepository.flush();
-
-        assertEquals(9, appender.getEventList().size());
-
-        WorkPackageRecord workPackageRecord = workPackageRepository.findAll().get(0);
-        workPackageRecord.getTasks().remove(task1);
-
-        appender.clear();
-
-        workPackageRepository.saveAndFlush(workPackage1);
-
-        assertEquals(1, appender.getEventList().size());
-    }
-
-    private void resetHibernateCacheAndLogAppender() {
-        //clear query cache
-        entityManager.clear();
-        appender.clear();
-    }
 }

@@ -5,9 +5,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.thoughtworks.demo.persistence.record.QWorkPackageRecord;
 import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
 import com.thoughtworks.demo.persistence.repository.WorkPackageRepositoryCustom;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 public class WorkPackageRepositoryImpl implements WorkPackageRepositoryCustom {
 

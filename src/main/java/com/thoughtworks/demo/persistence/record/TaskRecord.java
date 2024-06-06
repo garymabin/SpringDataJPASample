@@ -1,13 +1,13 @@
 package com.thoughtworks.demo.persistence.record;
 
 
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.NaturalId;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 

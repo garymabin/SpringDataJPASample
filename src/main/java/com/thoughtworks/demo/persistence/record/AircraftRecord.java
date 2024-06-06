@@ -3,6 +3,7 @@ package com.thoughtworks.demo.persistence.record;
 
 import com.thoughtworks.demo.annotations.Required;
 import com.thoughtworks.demo.util.RequiredFieldsValidator;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -11,7 +12,6 @@ import org.hibernate.annotations.JoinFormula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;

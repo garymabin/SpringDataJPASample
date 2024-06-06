@@ -1,8 +1,5 @@
 package com.thoughtworks.demo.persistence.repository;
 
-import com.google.common.collect.Lists;
-import com.thoughtworks.demo.persistence.record.AircraftRecord;
-import com.thoughtworks.demo.persistence.record.QWorkPackageRecord;
 import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,19 +13,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import java.util.Collections;
 import java.util.stream.StreamSupport;
 
 import static com.thoughtworks.demo.persistence.repository.specifications.WorkPackageSpecifications.workPackageIncludesText;
+import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@AutoConfigureEmbeddedDatabase(beanName = "dataSource")
+@AutoConfigureEmbeddedDatabase(beanName = "dataSource", provider = ZONKY, type = AutoConfigureEmbeddedDatabase.DatabaseType.POSTGRES)
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @Transactional

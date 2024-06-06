@@ -1,13 +1,11 @@
 package com.thoughtworks.demo.persistence.record;
 
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Tolerate;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +16,7 @@ import java.util.Set;
 public class WorkPackageRecord {
 
     @Tolerate
-    WorkPackageRecord() {
+    protected WorkPackageRecord() {
     }
 
     @GenericGenerator(name = "work_package_id_generator", strategy = "com.thoughtworks.demo.util.IDGenerator")
