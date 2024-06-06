@@ -9,6 +9,7 @@ import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
 import com.thoughtworks.demo.util.TestAppender;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import jakarta.persistence.EntityManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class CascadingTest {
     private EntityManager entityManager;
 
     private TestAppender appender;
+    private AircraftRecord aircraftRecord;
 
 
     @BeforeEach
@@ -44,10 +46,11 @@ public class CascadingTest {
         Logger root = (Logger) LoggerFactory.getLogger("root");
         appender = Objects.requireNonNull((TestAppender) root.getAppender("TEST"));
         appender.clear();
+        this.aircraftRecord = createAircraftRecord();
     }
 
     @Test
-    public void testAircraftWorkPackageCascadingUpdate() {
+    public void testAircraftWorkPackageCascadingUpdateAttached() {
         AircraftRecord aircraftRecord = AircraftRecord.builder()
                 .tailNumber("NS701")
                 .workPackages(Lists.newArrayList())
@@ -68,26 +71,78 @@ public class CascadingTest {
                         .build()));
 
         aircraftRepository.saveAndFlush(aircraftRecord);
-
-        assertEquals(5, appender.getEventList().size());
-
-        //clear query cache
-        resetHibernateCacheAndLogAppender();
-
-        assertNotNull(aircraftRepository.findAll().get(0).getWorkPackages().iterator().next().getId());
-        assertEquals(2, appender.getEventList().size());
-
-        resetHibernateCacheAndLogAppender();
-
-        assertNotNull(workPackageRepository.findAll().get(0).getAircraft().getId());
-        assertEquals(1, appender.getEventList().size());
+        var toBeSavedAircraft = aircraftRepository.findAll().get(0);
 
         //clear query cache
         resetHibernateCacheAndLogAppender();
 
-        assertEquals("NS701", workPackageRepository.findAll().get(0).getAircraft().getTailNumber());
-        assertEquals(2, appender.getEventList().size());
+        toBeSavedAircraft.setTailNumber("NS801");
+        toBeSavedAircraft.getWorkPackages().get(0).setName("WP4");
+        aircraftRepository.saveAndFlush(toBeSavedAircraft);
 
+        assertEquals(2, appender.getEventList().stream().filter(event -> event.getFormattedMessage().contains("update")).toList().size());
+    }
+
+    @Test
+    public void testAircraftWorkPackageCascadingUpdateDetached() {
+        AircraftRecord aircraftRecord2 = AircraftRecord.builder()
+                .tailNumber("NS703")
+                .id(aircraftRecord.getId())
+                .build();
+
+        aircraftRecord2.getWorkPackages().addAll(Lists.newArrayList(
+                WorkPackageRecord.builder()
+                        .id(aircraftRecord.getWorkPackages().get(0).getId())
+                        .name("WP1")
+                        .aircraft(AircraftRecord.builder().id(aircraftRecord.getId()).build())
+                        .build(),
+                WorkPackageRecord.builder()
+                        .id(aircraftRecord.getWorkPackages().get(1).getId())
+                        .aircraft(AircraftRecord.builder().id(aircraftRecord.getId()).build())
+                        .name("WP2")
+                        .build(),
+                WorkPackageRecord.builder()
+                        .id(aircraftRecord.getWorkPackages().get(2).getId())
+                        .aircraft(AircraftRecord.builder().id(aircraftRecord.getId()).build())
+                        .name("WP3")
+                        .build()));
+
+        //clear query cache
+        resetHibernateCacheAndLogAppender();
+
+        aircraftRepository.saveAndFlush(aircraftRecord2);
+
+        assertEquals(2, appender.getEventList().stream().filter(event -> event.getFormattedMessage().contains("update")).toList().size());
+    }
+
+    private @NotNull AircraftRecord createAircraftRecord() {
+        AircraftRecord aircraftRecord = AircraftRecord.builder()
+                .tailNumber("NS701")
+                .workPackages(Lists.newArrayList())
+                .build();
+
+        aircraftRecord.getWorkPackages().addAll(Lists.newArrayList(
+                WorkPackageRecord.builder()
+                        .name("WP1")
+                        .aircraft(aircraftRecord)
+                        .build(),
+                WorkPackageRecord.builder()
+                        .aircraft(aircraftRecord)
+                        .name("WP2")
+                        .build(),
+                WorkPackageRecord.builder()
+                        .aircraft(aircraftRecord)
+                        .name("WP3")
+                        .build()));
+
+        aircraftRepository.saveAndFlush(aircraftRecord);
+        return aircraftRecord;
+    }
+
+    private void resetHibernateCacheAndLogAppender() {
+        //clear query cache
+        entityManager.clear();
+        appender.clear();
     }
 
 }

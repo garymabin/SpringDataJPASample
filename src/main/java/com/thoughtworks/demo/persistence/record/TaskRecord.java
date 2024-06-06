@@ -18,7 +18,7 @@ import java.util.Set;
 public class TaskRecord {
 
     @Tolerate
-    TaskRecord() {
+    protected TaskRecord() {
     }
 
     @GeneratedValue
@@ -32,5 +32,6 @@ public class TaskRecord {
 
     @ManyToMany(mappedBy = "tasks")
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     private Set<WorkPackageRecord> workPackages = new HashSet<>();
 }

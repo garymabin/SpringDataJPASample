@@ -25,7 +25,7 @@ import java.util.List;
 public class AircraftRecord {
 
     @Tolerate
-    AircraftRecord() {
+    protected AircraftRecord() {
     }
 
     @GeneratedValue
@@ -43,9 +43,10 @@ public class AircraftRecord {
     @OneToMany(
             mappedBy = "aircraft",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            fetch = FetchType.EAGER
     )
     @ToString.Exclude
+    @Builder.Default
     private List<WorkPackageRecord> workPackages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

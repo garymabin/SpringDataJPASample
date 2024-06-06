@@ -27,7 +27,7 @@ public class WorkPackageRecord {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "aircraft_id")
     private AircraftRecord aircraft;
 
@@ -40,5 +40,6 @@ public class WorkPackageRecord {
             inverseJoinColumns = @JoinColumn(name = "task_id")
     )
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     private Set<TaskRecord> tasks = new HashSet<>();
 }
