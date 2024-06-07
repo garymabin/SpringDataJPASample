@@ -3,12 +3,14 @@ package com.thoughtworks.demo.persistence.record;
 
 import com.thoughtworks.demo.annotations.Required;
 import com.thoughtworks.demo.util.RequiredFieldsValidator;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.JoinFormula;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -39,6 +41,9 @@ public class AircraftRecord {
     @CreatedDate
     @Column(name = "created_at")
     private Instant createdAt;
+
+    @Version
+    private Long version;
 
     @OneToMany(
             mappedBy = "aircraft",

@@ -3,9 +3,7 @@ package com.thoughtworks.demo.persistence.repository;
 import ch.qos.logback.classic.Logger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.thoughtworks.demo.persistence.record.AircraftRecord;
-import com.thoughtworks.demo.persistence.record.TaskRecord;
-import com.thoughtworks.demo.persistence.record.WorkPackageRecord;
+import com.thoughtworks.demo.persistence.record.*;
 import com.thoughtworks.demo.util.TestAppender;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import jakarta.persistence.EntityManager;
@@ -86,7 +84,8 @@ public class CascadingTest {
     @Test
     public void testAircraftWorkPackageCascadingUpdateDetached() {
         AircraftRecord aircraftRecord2 = AircraftRecord.builder()
-                .tailNumber("NS703")
+                .tailNumber("NS701")
+                .version(aircraftRecord.getVersion())
                 .id(aircraftRecord.getId())
                 .build();
 
@@ -94,16 +93,34 @@ public class CascadingTest {
                 WorkPackageRecord.builder()
                         .id(aircraftRecord.getWorkPackages().get(0).getId())
                         .name("WP1")
-                        .aircraft(AircraftRecord.builder().id(aircraftRecord.getId()).build())
+                        .aircraft(aircraftRecord2)
+                        .workPackageSchedule(WorkPackageScheduleNoEquals.builder()
+                                .scheduleDate("2024-12-29")
+                                .repeatTimes(1)
+                                .repeatInterval(30)
+                                .location(Address.builder().countryCode("US").build()).build())
+                        .version(aircraftRecord.getWorkPackages().get(0).getVersion())
                         .build(),
                 WorkPackageRecord.builder()
                         .id(aircraftRecord.getWorkPackages().get(1).getId())
-                        .aircraft(AircraftRecord.builder().id(aircraftRecord.getId()).build())
+                        .aircraft(aircraftRecord2)
+                        .workPackageSchedule(WorkPackageScheduleNoEquals.builder()
+                                .scheduleDate("2024-12-30")
+                                .repeatTimes(1)
+                                .repeatInterval(30)
+                                .location(Address.builder().countryCode("US").build()).build())
                         .name("WP2")
+                        .version(aircraftRecord.getWorkPackages().get(1).getVersion())
                         .build(),
                 WorkPackageRecord.builder()
                         .id(aircraftRecord.getWorkPackages().get(2).getId())
-                        .aircraft(AircraftRecord.builder().id(aircraftRecord.getId()).build())
+                        .aircraft(aircraftRecord2)
+                        .workPackageSchedule(WorkPackageScheduleNoEquals.builder()
+                                .scheduleDate("2024-12-31")
+                                .repeatTimes(1)
+                                .repeatInterval(30)
+                                .location(Address.builder().countryCode("US").build()).build())
+                        .version(aircraftRecord.getWorkPackages().get(2).getVersion())
                         .name("WP3")
                         .build()));
 
@@ -116,6 +133,7 @@ public class CascadingTest {
     }
 
     private @NotNull AircraftRecord createAircraftRecord() {
+        Address address = Address.builder().countryCode("US").build();
         AircraftRecord aircraftRecord = AircraftRecord.builder()
                 .tailNumber("NS701")
                 .workPackages(Lists.newArrayList())
@@ -124,14 +142,17 @@ public class CascadingTest {
         aircraftRecord.getWorkPackages().addAll(Lists.newArrayList(
                 WorkPackageRecord.builder()
                         .name("WP1")
+                        .workPackageSchedule(WorkPackageScheduleNoEquals.builder().scheduleDate("2024-12-30").repeatTimes(1).repeatInterval(30).location(address).build())
                         .aircraft(aircraftRecord)
                         .build(),
                 WorkPackageRecord.builder()
                         .aircraft(aircraftRecord)
+                        .workPackageSchedule(WorkPackageScheduleNoEquals.builder().scheduleDate("2024-12-30").repeatTimes(1).repeatInterval(30).location(address).build())
                         .name("WP2")
                         .build(),
                 WorkPackageRecord.builder()
                         .aircraft(aircraftRecord)
+                        .workPackageSchedule(WorkPackageScheduleNoEquals.builder().scheduleDate("2024-12-30").repeatTimes(1).repeatInterval(30).location(address).build())
                         .name("WP3")
                         .build()));
 
@@ -141,7 +162,6 @@ public class CascadingTest {
 
     private void resetHibernateCacheAndLogAppender() {
         //clear query cache
-        entityManager.clear();
         appender.clear();
     }
 

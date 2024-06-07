@@ -1,10 +1,12 @@
 package com.thoughtworks.demo.persistence.record;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +32,17 @@ public class WorkPackageRecord {
     @ManyToOne
     @JoinColumn(name = "aircraft_id")
     private AircraftRecord aircraft;
+
+//    @Type(JsonType.class)
+//    @Column(name = "work_package_schedule", columnDefinition = "jsonb")
+//    private WorkPackageSchedule workPackageSchedule;
+
+    @Type(JsonType.class)
+    @Column(name = "work_package_schedule", columnDefinition = "jsonb")
+    private WorkPackageScheduleNoEquals workPackageSchedule;
+
+    @Version
+    private Long version;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,

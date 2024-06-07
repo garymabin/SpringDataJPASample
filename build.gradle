@@ -49,6 +49,8 @@ dependencies {
 
     implementation "com.google.guava:guava:33.2.1-jre"
 
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-62:3.6.0'
+
     compileOnly "org.postgresql:postgresql:${postgresql_version}"
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     compileOnly "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
